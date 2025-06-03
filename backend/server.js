@@ -11,11 +11,12 @@ app.post('/screenshot', async (req, res) => {
   let browser;
 
   try {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle0' });
 
-    // ✅ Full page screenshot
     const screenshot = await page.screenshot({ type: 'png', fullPage: true });
 
     res.set('Content-Type', 'image/png');
@@ -30,4 +31,5 @@ app.post('/screenshot', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
